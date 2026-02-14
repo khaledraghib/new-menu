@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WNS Café Menu</title>
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #fdfbf7 0%, #f5f1e8 100%);
+  margin: 0;
+  padding: 0;
+  direction: rtl;
+  min-height: 100vh;
+}
+.container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 30px 20px;
+}
+.header {
+  text-align: center;
+  padding: 60px 30px;
+  background: linear-gradient(135deg, #8b7355 0%, #6b5444 100%);
+  border-radius: 30px;
+  box-shadow: 0 20px 60px rgba(107, 84, 68, 0.15);
+  margin-bottom: 50px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: pulse 15s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.3; }
+}
+.header h1 {
+  font-size: 52px;
+  margin: 0;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1px;
+}
+.header p {
+  color: rgba(255,255,255,0.95);
+  font-size: 20px;
+  margin-top: 15px;
+  position: relative;
+  z-index: 1;
+  font-weight: 300;
+}
+.category-section {
+  margin-bottom: 60px;
+  animation: fadeInUp 0.8s ease-out;
+}
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+h2 {
+  color: #6b5444;
+  margin: 30px 0 30px;
+  font-size: 36px;
+  font-weight: 600;
+  padding: 20px 30px;
+  background: linear-gradient(135deg, rgba(139, 115, 85, 0.08) 0%, rgba(107, 84, 68, 0.05) 100%);
+  border-radius: 20px;
+  display: inline-block;
+  border-right: 5px solid #8b7355;
+  box-shadow: 0 4px 15px rgba(107, 84, 68, 0.08);
+}
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+.card {
+  background: #ffffff;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(107, 84, 68, 0.08);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  border: 1px solid rgba(139, 115, 85, 0.1);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b7355 0%, #d4a574 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.card:hover::before {
+  opacity: 1;
+}
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 45px rgba(107, 84, 68, 0.15);
+}
+.card-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.card:hover .card-image {
+  transform: scale(1.08);
+}
+.card-content {
+  padding: 25px;
+}
+.card.ps-card {
+  background: linear-gradient(135deg, #5a4a42 0%, #3d3330 100%);
+  color: white;
+  border: none;
+}
+.card.ps-card::before {
+  background: linear-gradient(90deg, #d4a574 0%, #f4d9b8 100%);
+}
+.card.ps-card .card-content {
+  background: transparent;
+}
+.card.ps-card h3, .card.ps-card p {
+  color: white;
+}
+.card h3 {
+  margin: 0 0 15px;
+  font-size: 22px;
+  color: #3d3330;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.card p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #6b5444;
+  line-height: 1.6;
+}
+.price {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8b7355 0%, #d4a574 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 15px 0;
+  display: inline-block;
+}
+.card.ps-card .price {
+  background: linear-gradient(135deg, #f4d9b8 0%, #d4a574 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.card-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.card button {
+  background: linear-gradient(135deg, #8b7355 0%, #6b5444 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  flex: 1;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.2);
+}
+.card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 115, 85, 0.3);
+  background: linear-gradient(135deg, #6b5444 0%, #8b7355 100%);
+}
+.card.ps-card button {
+  background: rgba(244, 217, 184, 0.95);
+  color: #3d3330;
+  font-weight: 700;
+}
+.card.ps-card button:hover {
+  background: #f4d9b8;
+  box-shadow: 0 8px 20px rgba(244, 217, 184, 0.4);
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(61, 51, 48, 0.75);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-content {
+  background: #fff;
+  padding: 35px;
+  border-radius: 25px;
+  max-width: 550px;
+  width: 90%;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 70px rgba(61, 51, 48, 0.3);
+  animation: slideUp 0.4s ease;
+  border: 1px solid rgba(139, 115, 85, 0.1);
+}
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(50px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+.close {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+  font-size: 32px;
+  cursor: pointer;
+  color: #8b7355;
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+.close:hover {
+  color: #6b5444;
+  transform: rotate(90deg);
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(139, 115, 85, 0.05) 0%, rgba(244, 217, 184, 0.08) 100%);
+  border-radius: 12px;
+  border-right: 4px solid #8b7355;
+  font-size: 16px;
+  color: #3d3330;
+}
+.booking-form {
+  margin-top: 25px;
+}
+.booking-form label {
+  display: block;
+  margin: 18px 0 8px;
+  font-weight: 600;
+  color: #3d3330;
+  font-size: 15px;
+}
+.booking-form input, .booking-form select, .booking-form textarea {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid rgba(139, 115, 85, 0.2);
+  border-radius: 12px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background: rgba(253, 251, 247, 0.5);
+}
+.booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus {
+  border-color: #8b7355;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.08);
+  background: #fff;
+}
+.booking-form button {
+  width: 100%;
+  background: linear-gradient(135deg, #8b7355 0%, #6b5444 100%);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 25px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(139, 115, 85, 0.25);
+}
+.booking-form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(139, 115, 85, 0.35);
+}
+.ps-info {
+  background: linear-gradient(135deg, rgba(244, 217, 184, 0.2) 0%, rgba(212, 165, 116, 0.15) 100%);
+  padding: 22px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  border-right: 4px solid #8b7355;
+  box-shadow: 0 4px 15px rgba(139, 115, 85, 0.08);
+}
+.ps-info h3 {
+  color: #6b5444;
+  margin-top: 0;
+  font-size: 20px;
+}
+.floating-cart {
+  position: fixed;
+  bottom: 35px;
+  left: 35px;
+  background: linear-gradient(135deg, #8b7355 0%, #6b5444 100%);
+  color: white;
+  padding: 18px 35px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 12px 35px rgba(139, 115, 85, 0.35);
+  transition: all 0.3s ease;
+  z-index: 999;
+  font-weight: 700;
+  font-size: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+.floating-cart:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 16px 45px rgba(139, 115, 85, 0.45);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(139, 115, 85, 0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b7355 0%, #6b5444 100%);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #6b5444 0%, #8b7355 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 36px;
+  }
+  h2 {
+    font-size: 28px;
+  }
+  .products {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .floating-cart {
+    bottom: 20px;
+    left: 20px;
+    padding: 15px 25px;
+    font-size: 15px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>☕ قائمة WNS Café 🎮</h1>
+    <p>استمتع بأفضل المشروبات والألعاب في مكان واحد</p>
+  </div>
+
+  <!-- المنتجات -->
+  <div id="menu"></div>
+
+  <!-- مودال السلة -->
+  <div id="cartModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCart()">&times;</span>
+      <h2 style="color: #667eea;">🛒 السلة</h2>
+      <div id="cartItems"></div>
+      <p id="totalPrice" style="font-size: 20px; font-weight: bold; color: #667eea; margin-top: 20px;"></p>
+      <button onclick="orderCartWhatsApp()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border: none; border-radius: 10px; cursor: pointer; width: 100%; font-size: 18px; font-weight: 600;">اطلب السلة عبر واتساب</button>
+    </div>
+  </div>
+
+  <!-- مودال حجز البلايستيشن -->
+  <div id="psBookingModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePSBooking()">&times;</span>
+      <h2>حجز بلايستيشن 🎮</h2>
+      
+      <div class="ps-info">
+        <h3>تفاصيل الحجز المختار:</h3>
+        <p id="selectedPSPackage"></p>
+      </div>
+
+      <form class="booking-form" onsubmit="submitPSBooking(event)">
+        <label>الاسم *</label>
+        <input type="text" id="customerName" required placeholder="أدخل اسمك">
+
+        <label>رقم الموبايل *</label>
+        <input type="tel" id="customerPhone" required placeholder="01XXXXXXXXX">
+
+        <label>التاريخ *</label>
+        <input type="date" id="bookingDate" required>
+
+        <label>الوقت المفضل *</label>
+        <input type="time" id="bookingTime" required>
+
+        <label>عدد الساعات</label>
+        <input type="text" id="hoursInfo" readonly>
+
+        <label>السعر النهائي</label>
+        <input type="text" id="finalPrice" readonly style="font-weight: bold; color: #667eea; font-size: 18px;">
+
+        <label>اختر الجهاز * (إجباري)</label>
+        <select id="deviceNumber" required onchange="updatePSPrice()">
+          <option value="">اختر الجهاز</option>
+          <option value="PS5 - جهاز 1" data-type="ps5">🎮 PlayStation 5 - جهاز 1</option>
+          <option value="PS4 - جهاز 2" data-type="ps4">🎮 PlayStation 4 - جهاز 2</option>
+          <option value="PS4 - جهاز 3" data-type="ps4">🎮 PlayStation 4 - جهاز 3</option>
+          <option value="PS4 - جهاز 4" data-type="ps4">🎮 PlayStation 4 - جهاز 4</option>
+          <option value="PS4 - جهاز 5" data-type="ps4">🎮 PlayStation 4 - جهاز 5</option>
+        </select>
+
+        <label>ملاحظات إضافية (اختياري)</label>
+        <textarea id="bookingNotes" rows="3" placeholder="أي ملاحظات أو طلبات خاصة..."></textarea>
+
+        <button type="submit">إرسال الحجز عبر واتساب 📱</button>
+      </form>
+    </div>
+  </div>
+
+  <button onclick="showCart()" class="floating-cart">🛒 عرض السلة</button>
+</div>
+
+<script>
+const products = [
+  // Hot Drinks
+  {id:1, category:"Hot Drinks", name:"شاي عاده", price:10},
+  {id:2, category:"Hot Drinks", name:"شاي فتله", price:15},
+  {id:3, category:"Hot Drinks", name:"شاي حليب", price:30},
+  {id:4, category:"Hot Drinks", name:"شاي فليفر", price:15},
+  {id:5, category:"Hot Drinks", name:"نعناع", price:15},
+  {id:6, category:"Hot Drinks", name:"كركديه", price:15},
+  {id:7, category:"Hot Drinks", name:"ينسون", price:15},
+  {id:8, category:"Hot Drinks", name:"خلطه", price:20},
+  {id:9, category:"Hot Drinks", name:"قرفه", price:15},
+  {id:10, category:"Hot Drinks", name:"قرفه حليب", price:30},
+  {id:11, category:"Hot Drinks", name:"سحلب", price:35},
+  {id:12, category:"Hot Drinks", name:"سحلب مكسرات", price:45},
+  {id:13, category:"Hot Drinks", name:"سحلب فواكه", price:45},
+  {id:14, category:"Hot Drinks", name:"هوت سيدر (تفاح _ برتقال)", price:30},
+  {id:15, category:"Hot Drinks", name:"هوت شوكليت", price:50},
+  {id:16, category:"Hot Drinks", name:"هوت اوريو", price:60},
+  {id:17, category:"Hot Drinks", name:"هوت لوتس", price:60},
+  {id:18, category:"Hot Drinks", name:"هوت شوكليت (اي نوع شوكليت من اختيارك)", price:65},
+
+  // Turkish Coffee
+  {id:19, category:"Turkish Coffee", name:"فاتح ساده D", price:35},
+  {id:20, category:"Turkish Coffee", name:"فاتح ساده S", price:25},
+  {id:21, category:"Turkish Coffee", name:"وسط سادة D", price:35},
+  {id:22, category:"Turkish Coffee", name:"وسط سادة S", price:25},
+  {id:23, category:"Turkish Coffee", name:"غامق سادة D", price:35},
+  {id:24, category:"Turkish Coffee", name:"غامق سادة S", price:25},
+  {id:25, category:"Turkish Coffee", name:"فاتح محوج D", price:40},
+  {id:26, category:"Turkish Coffee", name:"فاتح محوج S", price:30},
+  {id:27, category:"Turkish Coffee", name:"وسط محوج D", price:40},
+  {id:28, category:"Turkish Coffee", name:"وسط محوج S", price:30},
+  {id:29, category:"Turkish Coffee", name:"غامق محوج D", price:40},
+  {id:30, category:"Turkish Coffee", name:"غامق محوج S", price:30},
+
+  // French Coffee
+  {id:31, category:"French Coffee", name:"فرنساوي عاده", price:35},
+  {id:32, category:"French Coffee", name:"بندق", price:45},
+  {id:33, category:"French Coffee", name:"كراميل", price:45},
+  {id:34, category:"French Coffee", name:"نوتيلا", price:40},
+  {id:35, category:"French Coffee", name:"لوتس", price:40},
+  {id:36, category:"French Coffee", name:"فراوله", price:40},
+  {id:37, category:"French Coffee", name:"نسكافيه بلاك", price:25},
+  {id:38, category:"French Coffee", name:"نسكافيه بلبن", price:40},
+  {id:39, category:"French Coffee", name:"كوفي مكس", price:15},
+  {id:40, category:"French Coffee", name:"كوفي مكس بلبن", price:30},
+  
+  // Italian Coffee
+  {id:41, category:"Italian Coffee", name:"اسبريسو سنجل", price:30},
+  {id:42, category:"Italian Coffee", name:"اسبريسو دبل", price:40},
+  {id:43, category:"Italian Coffee", name:"ميكاتو سنجل", price:35},
+  {id:44, category:"Italian Coffee", name:"ميكاتو دبل", price:45},
+  {id:45, category:"Italian Coffee", name:"كورتادو", price:50},
+  {id:46, category:"Italian Coffee", name:"فلات وايت", price:50},
+  {id:47, category:"Italian Coffee", name:"أفوجاتو", price:40}, 
+  {id:48, category:"Italian Coffee", name:"لاتيه", price:55},
+  {id:49, category:"Italian Coffee", name:"سبانش لاتيه", price:60},
+  {id:50, category:"Italian Coffee", name:"كابتشينو", price:55},
+  {id:51, category:"Italian Coffee", name:"موكا (دارك/وايت)", price:60},
+  {id:52, category:"Italian Coffee", name:"أميركان", price:35},
+
+  // Ice Italian Coffee
+  {id:53, category:"Ice Italian Coffee", name:"ايس لاتيه", price:60},
+  {id:54, category:"Ice Italian Coffee", name:"ايس سبانش لاتيه", price:70},
+  {id:55, category:"Ice Italian Coffee", name:"ايس كابتشينو", price:60},
+  {id:56, category:"Ice Italian Coffee", name:"ايس كراميل ميكاتو", price:65},
+  {id:57, category:"Ice Italian Coffee", name:"ايس موكا (دارك/وايت)", price:70},
+  {id:58, category:"Ice Italian Coffee", name:"ايس أميركان", price:45},
+
+  // Juice
+  {id:59, category:"Juice", name:"عصير مانجو", price:40},
+  {id:60, category:"Juice", name:"عصير فراولة", price:40},
+  {id:61, category:"Juice", name:"كيوي", price:50},
+  {id:62, category:"Juice", name:"بلح باللبن", price:40},
+  {id:63, category:"Juice", name:"بلح باللبن مكسرات", price:55},
+  {id:64, category:"Juice", name:"رمان", price:40},
+  {id:65, category:"Juice", name:"برتقال", price:40},
+  {id:66, category:"Juice", name:"جوافة", price:35},
+  {id:67, category:"Juice", name:"جوافة باللبن", price:45},
+  {id:68, category:"Juice", name:"ليمون", price:35},
+  {id:69, category:"Juice", name:"ليمون نعناع", price:40},
+  {id:70, category:"Juice", name:"موز", price:40},
+  {id:71, category:"Juice", name:"بطيخ", price:40},
+
+  // Fresh Cocktails
+  {id:72, category:"Cocktails", name:"فلوريدا", price:50},
+  {id:73, category:"Cocktails", name:"هاواي", price:60},
+  {id:74, category:"Cocktails", name:"كامبا", price:60},
+  {id:75, category:"Cocktails", name:"ريد كوكتيل", price:55},
+  {id:76, category:"Cocktails", name:"طوفي", price:55},
+  {id:77, category:"Cocktails", name:"ريد منت", price:50},
+  {id:78, category:"Cocktails", name:"فريش WNS", price:65},
+
+  // Smoothie
+  {id:79, category:"Smoothie", name:"سموثي مانجو", price:50},
+  {id:80, category:"Smoothie", name:"سموثي فراولة", price:45},
+  {id:81, category:"Smoothie", name:"سموثي بطيخ", price:45},
+  {id:82, category:"Smoothie", name:"سموثي ليمون", price:40},
+  {id:83, category:"Smoothie", name:"سموثي ليمون نعناع", price:45},
+  {id:84, category:"Smoothie", name:"سموثي خوخ", price:50},
+  {id:85, category:"Smoothie", name:"سموثي أناناس", price:45},
+  {id:86, category:"Smoothie", name:"باشون فروت", price:50},
+  {id:87, category:"Smoothie", name:"بلو بيري", price:45},
+  {id:88, category:"Smoothie", name:"مكس بيري", price:45},
+  {id:89, category:"Smoothie", name:"كيوي", price:50},
+  {id:90, category:"Smoothie", name:"تفاح أخضر", price:40},
+  {id:91, category:"Smoothie", name:"كريز", price:40},
+
+  // Frappe
+  {id:92, category:"Frappe", name:"فرابيه فانيليا", price:50},
+  {id:93, category:"Frappe", name:"فرابيه شوكليت", price:50},
+  {id:94, category:"Frappe", name:"فرابيه كوفي", price:50},
+  {id:95, category:"Frappe", name:"فرابيه بندق", price:55},
+  {id:96, category:"Frappe", name:"فرابيه كراميل", price:55},
+  {id:97, category:"Frappe", name:"فرابيه لوتس", price:55},
+  {id:98, category:"Frappe", name:"فرابيه نوتيلا", price:55},
+  {id:99, category:"Frappe", name:"فرابيه أوريو", price:60},
+  {id:100, category:"Frappe", name:"فرابيه فراولة", price:55},
+  {id:101, category:"Frappe", name:"فرابيه موز", price:55},
+  {id:102, category:"Frappe", name:"فرابيه باشون", price:55},
+  {id:103, category:"Frappe", name:"فرابيه مانجو", price:55},
+
+  // Soda Mixes
+  {id:104, category:"Soda Mixes", name:"موهيتو كلاسيك", price:50},
+  {id:105, category:"Soda Mixes", name:"موهيتو شعير", price:60},
+  {id:106, category:"Soda Mixes", name:"موهيتو فليفر", price:55},
+  {id:107, category:"Soda Mixes", name:"سكوتش منت", price:50},
+  {id:108, category:"Soda Mixes", name:"صن شاين", price:60},
+  {id:109, category:"Soda Mixes", name:"صن رايز", price:60},
+  {id:110, category:"Soda Mixes", name:"بلو باشون", price:60},
+  {id:111, category:"Soda Mixes", name:"بلو سكاي", price:60},
+  {id:112, category:"Soda Mixes", name:"بينا كولادا", price:60},
+  {id:113, category:"Soda Mixes", name:"شيري كولا", price:60},
+
+  // Milkshake
+  {id:114, category:"Milkshake", name:"ميلك شيك فانيليا", price:50},
+  {id:115, category:"Milkshake", name:"ميلك شيك شوكليت", price:50},
+  {id:116, category:"Milkshake", name:"ميلك شيك أوريو", price:60},
+  {id:117, category:"Milkshake", name:"ميلك شيك لوتس", price:60},
+  {id:118, category:"Milkshake", name:"هوهوز", price:60},
+  {id:119, category:"Milkshake", name:"توينكز", price:60},
+  {id:120, category:"Milkshake", name:"ميلك شيك كراميل", price:55},
+  {id:121, category:"Milkshake", name:"ميلك شيك بندق", price:65},
+  {id:122, category:"Milkshake", name:"ميلك شيك جالاكسي", price:65},
+  {id:123, category:"Milkshake", name:"ميلك شيك كيت كات", price:65},
+  {id:124, category:"Milkshake", name:"ميلك شيك مانجو", price:55},
+  {id:125, category:"Milkshake", name:"ميلك شيك فراولة", price:55},
+  {id:126, category:"Milkshake", name:"ميلك شيك كريز", price:55},
+  {id:127, category:"Milkshake", name:"ميلك شيك باشون", price:55},
+  {id:128, category:"Milkshake", name:"ميلك شيك أناناس", price:55},
+  {id:129, category:"Milkshake", name:"ميلك شيك بلو بيري", price:55},
+  {id:130, category:"Milkshake", name:"ميلك شيك مكس بيري", price:55},
+  {id:131, category:"Milkshake", name:"ميلك شيك خوخ", price:60},
+  {id:132, category:"Milkshake", name:"ميلك شيك تفاح أخضر", price:55},
+  {id:133, category:"Milkshake", name:"ميلك شيك كيوي", price:60},
+  {id:134, category:"Milkshake", name:"ميلك شيك WNS", price:70},
+
+  // Zabadoo
+  {id:135, category:"Zabadoo", name:"زبادو مانجو", price:65},
+  {id:136, category:"Zabadoo", name:"زبادو فراولة", price:60},
+  {id:137, category:"Zabadoo", name:"زبادو أناناس", price:60},
+  {id:138, category:"Zabadoo", name:"زبادو خوخ", price:65},
+  {id:139, category:"Zabadoo", name:"زبادو بلو بيري", price:60},
+  {id:140, category:"Zabadoo", name:"زبادو باشون فروت", price:65},
+  {id:141, category:"Zabadoo", name:"زبادو مكس بيري", price:60},
+  {id:142, category:"Zabadoo", name:"زبادي تفاح", price:60},
+  {id:143, category:"Zabadoo", name:"زبادو كيوي", price:65},
+  {id:144, category:"Zabadoo", name:"زبادي عسل", price:55},
+
+  // Dessert
+  {id:145, category:"Dessert", name:"وافل نوتيلا", price:60},
+  {id:146, category:"Dessert", name:"وافل وايت", price:60},
+  {id:147, category:"Dessert", name:"وافل لوتس", price:65},
+  {id:148, category:"Dessert", name:"وافل بستاشيو", price:70},
+  {id:149, category:"Dessert", name:"وافل مكس", price:70},
+  {id:150, category:"Dessert", name:"WNS Waffle (4 أنواع)", price:75},
+  {id:151, category:"Dessert", name:"مولتن كيك", price:55},
+  {id:152, category:"Dessert", name:"ميني تورتة", price:65},
+  {id:153, category:"Dessert", name:"دونتس", price:35},
+  {id:154, category:"Dessert", name:"دونتس بستاشيو", price:40},
+  {id:155, category:"Dessert", name:"شيز كيك", price:50},
+  {id:156, category:"Dessert", name:"شيز كيك بستاشيو", price:55},
+
+  // Soft Drinks
+  {id:157, category:"Soft Drinks", name:"بيبسي", price:25},
+  {id:158, category:"Soft Drinks", name:"سفن", price:25},
+  {id:159, category:"Soft Drinks", name:"ميرندا", price:25},
+  {id:160, category:"Soft Drinks", name:"ستينج", price:25},
+  {id:161, category:"Soft Drinks", name:"فيروز", price:25},
+  {id:162, category:"Soft Drinks", name:"Vcola", price:25},
+  {id:163, category:"Soft Drinks", name:"بريل", price:30},
+  {id:164, category:"Soft Drinks", name:"ريدبل", price:70},
+
+  // Extras
+  {id:165, category:"Extras", name:"صوص إضافي", price:10},
+  {id:166, category:"Extras", name:"مارشميلو", price:10},
+  {id:167, category:"Extras", name:"سيرب فليفر", price:15},
+  {id:168, category:"Extras", name:"حليب مكثف", price:15},
+  {id:169, category:"Extras", name:"مكسرات", price:20},
+  {id:170, category:"Extras", name:"بوبا", price:30},
+  {id:171, category:"Extras", name:"كب تلج مع فليفر", price:10},
+
+  // PlayStation - الإضافة الجديدة 🎮
+  {id:172, category:"PlayStation", name:"حجز مفتوح (وقت مفتوح)", price: 0, isPS: true, hours: "وقت مفتوح", duration: 0, isOpenBooking: true},
+  {id:173, category:"PlayStation", name:"ساعة بلايستيشن", price: 0, isPS: true, hours: "ساعة واحدة", duration: 1},
+  {id:174, category:"PlayStation", name:"ساعتين بلايستيشن", price: 0, isPS: true, hours: "ساعتين", duration: 2},
+  {id:175, category:"PlayStation", name:"3 ساعات بلايستيشن", price: 0, isPS: true, hours: "3 ساعات", duration: 3},
+  {id:176, category:"PlayStation", name:"ليلة كاملة (8 ساعات)", price: 0, isPS: true, hours: "8 ساعات", duration: 8}
+];
+
+const menuContainer = document.getElementById('menu');
+let cart = [];
+let currentPSBooking = null;
+const whatsappNumber = "201028275135";
+
+// دالة للحصول على صورة المنتج
+function getProductImage(productName, category) {
+  // هنا بنستخدم صور placeholder - ممكن تستبدلها بصورك الحقيقية
+  const imageMap = {
+    // يمكنك إضافة صور خاصة بك هنا
+    // مثال: "شاي عاده": "path/to/your/image.jpg"
+  };
+  
+  // إذا كان عندك صورة مخصصة للمنتج
+  if(imageMap[productName]) {
+    return imageMap[productName];
+  }
+  
+  // صور افتراضية حسب الفئة
+  const categoryImages = {
+    "Hot Drinks": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop",
+    "Turkish Coffee": "https://images.unsplash.com/photo-1610889556528-9a770e32642f?w=400&h=300&fit=crop",
+    "French Coffee": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop",
+    "Italian Coffee": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=300&fit=crop",
+    "Ice Italian Coffee": "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=400&h=300&fit=crop",
+    "Juice": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop",
+    "Cocktails": "https://images.unsplash.com/photo-1546171753-97d7676e4602?w=400&h=300&fit=crop",
+    "Smoothie": "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=400&h=300&fit=crop",
+    "Frappe": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=300&fit=crop",
+    "Soda Mixes": "https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=400&h=300&fit=crop",
+    "Milkshake": "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=400&h=300&fit=crop",
+    "Zabadoo": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",
+    "Dessert": "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop",
+    "Soft Drinks": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&h=300&fit=crop",
+    "Extras": "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=400&h=300&fit=crop",
+    "PlayStation": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop"
+  };
+  
+  return categoryImages[category] || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop";
+}
+
+function renderMenu() {
+  const categories = [...new Set(products.map(p => p.category))];
+  categories.forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    
+    const title = document.createElement('h2');
+    title.textContent = cat;
+    section.appendChild(title);
+
+    const prodGrid = document.createElement('div');
+    prodGrid.className = 'products';
+
+    products.filter(p => p.category === cat).forEach(product => {
+      const card = document.createElement('div');
+      card.className = product.isPS ? 'card ps-card' : 'card';
+      
+      const productImage = getProductImage(product.name, product.category);
+      
+      if(product.isPS) {
+        // كارت البلايستيشن بتصميم مميز
+        if(product.isOpenBooking) {
+          // الحجز المفتوح
+          card.innerHTML = `
+            <img src="${productImage}" alt="${product.name}" class="card-image">
+            <div class="card-content">
+              <h3>🎮 ${product.name}</h3>
+              <p>⏱️ ${product.hours}</p>
+              <p class="price" style="font-size: 16px;">
+                💰 PS5: 45 جنيه/ساعة<br>
+                💰 PS4: 30 جنيه/ساعة
+              </p>
+              <small style="opacity:0.9; display: block; margin-top: 8px;">الحساب حسب الوقت الفعلي</small>
+              <div class="card-buttons">
+                <button onclick="openPSBooking(${product.id})">احجز الآن</button>
+              </div>
+            </div>
+          `;
+        } else {
+          // الحجز بوقت محدد
+          const ps5Price = product.duration * 45;
+          const ps4Price = product.duration * 30;
+          card.innerHTML = `
+            <img src="${productImage}" alt="${product.name}" class="card-image">
+            <div class="card-content">
+              <h3>🎮 ${product.name}</h3>
+              <p>⏱️ المدة: ${product.hours}</p>
+              <p class="price" style="font-size: 16px;">
+                💰 PS5: ${ps5Price} جنيه<br>
+                💰 PS4: ${ps4Price} جنيه
+              </p>
+              <div class="card-buttons">
+                <button onclick="openPSBooking(${product.id})">احجز الآن</button>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        // كارت المنتجات العادية
+        card.innerHTML = `
+          <img src="${productImage}" alt="${product.name}" class="card-image">
+          <div class="card-content">
+            <h3>${product.name}</h3>
+            <p class="price">${product.price} جنيه</p>
+            <div class="card-buttons">
+              <button onclick="addToCart(${product.id})">أضف للسلة</button>
+              <button onclick="orderWhatsApp(${product.id})">اطلب الآن</button>
+            </div>
+          </div>
+        `;
+      }
+      prodGrid.appendChild(card);
+    });
+
+    section.appendChild(prodGrid);
+    menuContainer.appendChild(section);
+  });
+}
+
+// فتح نموذج حجز البلايستيشن
+function openPSBooking(id) {
+  const item = products.find(p => p.id === id);
+  currentPSBooking = item;
+  
+  if(item.isOpenBooking) {
+    // الحجز المفتوح
+    document.getElementById('selectedPSPackage').innerHTML = `
+      <strong>${item.name}</strong><br>
+      ⏱️ ${item.hours}<br>
+      💰 PS5: 45 جنيه/ساعة | PS4: 30 جنيه/ساعة<br>
+      <small style="color: #666;">الحساب سيكون حسب الوقت الفعلي للعب</small>
+    `;
+  } else {
+    // الحجز المحدد بوقت
+    const ps5Price = item.duration * 45;
+    const ps4Price = item.duration * 30;
+    
+    document.getElementById('selectedPSPackage').innerHTML = `
+      <strong>${item.name}</strong><br>
+      ⏱️ المدة: ${item.hours}<br>
+      💰 PS5: ${ps5Price} جنيه | PS4: ${ps4Price} جنيه
+    `;
+  }
+  
+  document.getElementById('hoursInfo').value = item.hours;
+  document.getElementById('finalPrice').value = '';
+  document.getElementById('deviceNumber').value = '';
+  document.getElementById('psBookingModal').style.display = 'flex';
+  
+  // تعيين التاريخ الحالي كحد أدنى
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('bookingDate').min = today;
+}
+
+// تحديث السعر عند اختيار الجهاز
+function updatePSPrice() {
+  const deviceSelect = document.getElementById('deviceNumber');
+  const selectedOption = deviceSelect.options[deviceSelect.selectedIndex];
+  const deviceType = selectedOption.getAttribute('data-type');
+  
+  if(deviceType && currentPSBooking) {
+    if(currentPSBooking.isOpenBooking) {
+      // للحجز المفتوح
+      const pricePerHour = deviceType === 'ps5' ? 45 : 30;
+      document.getElementById('finalPrice').value = `${pricePerHour} جنيه/ساعة (وقت مفتوح)`;
+    } else {
+      // للحجز المحدد
+      const pricePerHour = deviceType === 'ps5' ? 45 : 30;
+      const totalPrice = currentPSBooking.duration * pricePerHour;
+      document.getElementById('finalPrice').value = `${totalPrice} جنيه`;
+    }
+  }
+}
+
+// إغلاق نموذج الحجز
+function closePSBooking() {
+  document.getElementById('psBookingModal').style.display = 'none';
+  currentPSBooking = null;
+}
+
+// إرسال الحجز
+function submitPSBooking(event) {
+  event.preventDefault();
+  
+  const name = document.getElementById('customerName').value;
+  const phone = document.getElementById('customerPhone').value;
+  const date = document.getElementById('bookingDate').value;
+  const time = document.getElementById('bookingTime').value;
+  const device = document.getElementById('deviceNumber').value;
+  const notes = document.getElementById('bookingNotes').value;
+  const finalPrice = document.getElementById('finalPrice').value;
+  
+  if(!device) {
+    alert('من فضلك اختر الجهاز أولاً');
+    return;
+  }
+  
+  let message = `🎮 *حجز بلايستيشن جديد* 🎮\n\n`;
+  message += `📦 *نوع الحجز:* ${currentPSBooking.name}\n`;
+  message += `⏱️ *المدة:* ${currentPSBooking.hours}\n`;
+  message += `🎮 *الجهاز:* ${device}\n`;
+  message += `💰 *السعر:* ${finalPrice}\n\n`;
+  message += `👤 *الاسم:* ${name}\n`;
+  message += `📱 *الموبايل:* ${phone}\n`;
+  message += `📅 *التاريخ:* ${date}\n`;
+  message += `🕐 *الوقت:* ${time}\n`;
+  
+  if(notes) {
+    message += `\n📝 *ملاحظات:*\n${notes}`;
+  }
+  
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+  
+  // إغلاق النموذج وإعادة تعيين البيانات
+  closePSBooking();
+  document.querySelector('.booking-form').reset();
+}
+
+// الدوال الأصلية للسلة والطلبات
+function addToCart(id) {
+  const item = products.find(p => p.id === id);
+  cart.push(item);
+  alert(`${item.name} تمت إضافته إلى السلة`);
+}
+
+function showCart() {
+  document.getElementById('cartModal').style.display = 'flex';
+  const cartDiv = document.getElementById('cartItems');
+  cartDiv.innerHTML = '';
+  let total = 0;
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.textContent = `${item.name} - ${item.price} جنيه`;
+    cartDiv.appendChild(div);
+    total += item.price;
+  });
+  document.getElementById('totalPrice').textContent = `المجموع: ${total} جنيه`;
+}
+
+function closeCart() {
+  document.getElementById('cartModal').style.display = 'none';
+}
+
+function orderWhatsApp(id) {
+  const item = products.find(p => p.id === id);
+  const message = `مرحبا، أريد طلب المنتج: ${item.name} بسعر ${item.price} جنيه`;
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+}
+
+function orderCartWhatsApp() {
+  if(cart.length === 0){
+    alert("السلة فارغة");
+    return;
+  }
+  let message = "مرحبا، أريد طلب هذه المنتجات:\n";
+  cart.forEach(item => {
+    message += `- ${item.name} : ${item.price} جنيه\n`;
+  });
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+}
+
+// بدء تشغيل القائمة
+renderMenu();
+</script>
+</body>
+</html>
