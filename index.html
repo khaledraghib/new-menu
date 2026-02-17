@@ -303,6 +303,15 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1;
+    display: inline-block;
+  }
+  @media (prefers-color-scheme: dark) {
+    .price {
+      background: linear-gradient(135deg, #d4a574 0%, #e8c498 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
   .price-currency {
     font-size: 13px;
@@ -630,10 +639,19 @@
     margin-top: 12px;
   }
   .cart-total span {
+    display: inline-block;
     background: var(--price-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+  @media (prefers-color-scheme: dark) {
+    .cart-total span {
+      background: linear-gradient(135deg, #d4a574 0%, #e8c498 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
   }
 
   /* Booking form */
@@ -1117,7 +1135,8 @@ const products = [
   {id:158, category:"Soft Drinks", name:"سفن", price:25},
   {id:159, category:"Soft Drinks", name:"ميرندا", price:25},
   {id:160, category:"Soft Drinks", name:"ستينج", price:25},
-  {id:161, category:"Soft Drinks", name:"فيروز", price:25},
+  {id:161, category:"Soft Drinks", name:"فيروز", price:30},
+  {id:177, category:"Soft Drinks", name:"فيوري", price:25},
   {id:162, category:"Soft Drinks", name:"Vcola", price:25},
   {id:163, category:"Soft Drinks", name:"بريل", price:30},
   {id:164, category:"Soft Drinks", name:"ريدبل", price:70},
