@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WNS Café Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #fdfbf7;
+    --bg-secondary: #f0ebe0;
+    --bg-card: #ffffff;
+    --bg-card-hover: #faf7f2;
+    --text-primary: #1a1208;
+    --text-secondary: #5a4a35;
+    --text-muted: #8b7355;
+    --accent: #8b7355;
+    --accent-light: #d4a574;
+    --accent-dark: #5a3e28;
+    --border: rgba(139,115,85,0.15);
+    --border-strong: rgba(139,115,85,0.3);
+    --shadow-sm: 0 2px 8px rgba(90,62,40,0.08);
+    --shadow-md: 0 8px 24px rgba(90,62,40,0.12);
+    --shadow-lg: 0 16px 48px rgba(90,62,40,0.18);
+    --navbar-bg: linear-gradient(135deg, #5a3e28 0%, #3d2a1a 100%);
+    --header-bg: linear-gradient(135deg, #7a6040 0%, #5a3e28 100%);
+    --category-tag-bg: rgba(139,115,85,0.08);
+    --price-gradient: linear-gradient(135deg, #8b7355 0%, #d4a574 100%);
+    --btn-bg: linear-gradient(135deg, #8b7355 0%, #6b5030 100%);
+    --btn-whatsapp: linear-gradient(135deg, #25a244 0%, #1a7a32 100%);
+    --pill-bg: rgba(139,115,85,0.1);
+    --modal-overlay: rgba(20,12,5,0.75);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #111008;
+      --bg-secondary: #1a1510;
+      --bg-card: #1e1812;
+      --bg-card-hover: #251e14;
+      --text-primary: #f5ede0;
+      --text-secondary: #c8a882;
+      --text-muted: #9a7d5e;
+      --accent: #d4a574;
+      --accent-light: #e8c498;
+      --accent-dark: #a07040;
+      --border: rgba(212,165,116,0.12);
+      --border-strong: rgba(212,165,116,0.25);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+      --navbar-bg: linear-gradient(135deg, #1a1208 0%, #0d0a05 100%);
+      --header-bg: linear-gradient(135deg, #3d2e1a 0%, #251e10 100%);
+      --category-tag-bg: rgba(212,165,116,0.08);
+      --price-gradient: linear-gradient(135deg, #d4a574 0%, #e8c498 100%);
+      --btn-bg: linear-gradient(135deg, #9a7040 0%, #7a5530 100%);
+      --btn-whatsapp: linear-gradient(135deg, #1a8a35 0%, #145a25 100%);
+      --pill-bg: rgba(212,165,116,0.1);
+      --modal-overlay: rgba(0,0,0,0.85);
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    direction: rtl;
+    min-height: 100vh;
+    padding-top: 60px;
+  }
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--navbar-bg);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(212,165,116,0.15);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .navbar-container {
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .navbar-container::-webkit-scrollbar { display: none; }
+  .navbar-brand {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--accent-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 22px;
+    background: rgba(0,0,0,0.25);
+    white-space: nowrap;
+    border-left: 1px solid rgba(212,165,116,0.15);
+    flex-shrink: 0;
+  }
+  .navbar-menu {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+  }
+  .navbar-item {
+    color: rgba(245,237,224,0.8);
+    text-decoration: none;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .navbar-item:hover {
+    background: rgba(212,165,116,0.12);
+    color: var(--accent-light);
+  }
+  .container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 28px 16px;
+  }
+  .header {
+    text-align: center;
+    padding: 52px 24px;
+    background: var(--header-bg);
+    border-radius: 24px;
+    margin-bottom: 44px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212,165,116,0.1);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(212,165,116,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(212,165,116,0.08) 0%, transparent 60%);
+  }
+  .header::after {
+    content: '☕';
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.04;
+    top: -20px;
+    right: -20px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: 46px;
+    font-weight: 900;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .header p {
+    color: rgba(245,237,224,0.75);
+    font-size: 17px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .category-section { margin-bottom: 52px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 0 4px;
+  }
+  .section-emoji { font-size: 28px; line-height: 1; }
+  .section-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-strong), transparent);
+  }
+  .section-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--pill-bg);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--bg-card);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-strong);
+    background: var(--bg-card-hover);
+  }
+  .card-accent {
+    height: 3px;
+    background: var(--price-gradient);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .card:hover .card-accent { width: 100%; }
+  .card-body {
+    padding: 20px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card-category-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--pill-bg);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    text-transform: uppercase;
+  }
+  .card-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  .card-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  .price {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    display: inline-block;
+  }
+  .price-currency {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+  .card-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
+  }
+  .btn {
+    border: none;
+    padding: 11px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: 'Tajawal', sans-serif;
+    transition: all 0.25s;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .btn-order {
+    background: var(--btn-whatsapp);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(37,162,68,0.2);
+  }
+  .btn-order:hover,
+  .btn-add-first:hover,
+  .btn-birthday:hover {
+    transform: translateY(-1px);
+  }
+  .btn-add-first, .btn-birthday {
+    background: var(--btn-bg);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(139,115,85,0.25);
+  }
+  .qty-stepper {
+    display: flex;
+    align-items: center;
+    background: var(--pill-bg);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .qty-btn {
+    border: none;
+    background: transparent;
+    color: var(--accent);
+    font-size: 19px;
+    font-weight: 900;
+    width: 36px;
+    height: 38px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Tajawal', sans-serif;
+  }
+  .qty-btn:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+  .qty-display {
+    min-width: 28px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    padding: 0 2px;
+    user-select: none;
+  }
+  .birthday-card {
+    background: linear-gradient(135deg, #5a4a42 0%, #3d3330 100%);
+    border: 1px solid rgba(212,165,116,0.25);
+    color: white;
+  }
+  .birthday-card .card-name { color: #fff; }
+  .birthday-card .card-category-pill {
+    color: rgba(244,217,184,0.9);
+    background: rgba(212,165,116,0.15);
+    border-color: rgba(212,165,116,0.25);
+  }
+  .birthday-note {
+    color: rgba(244,217,184,0.85);
+    font-size: 14px;
+    line-height: 1.7;
+    background: rgba(212,165,116,0.12);
+    border: 1px solid rgba(212,165,116,0.25);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--modal-overlay);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 16px;
+  }
+  .modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    padding: 30px;
+    border-radius: 22px;
+    max-width: 520px;
+    width: 100%;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    color: var(--text-primary);
+  }
+  .modal-content h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .close {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-muted);
+    line-height: 1;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  .close:hover {
+    background: var(--pill-bg);
+    color: var(--text-primary);
+    transform: rotate(90deg);
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--category-tag-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-weight: 500;
+    gap: 8px;
+  }
+  .cart-item-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    min-width: 0;
+  }
+  .cart-item-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .cart-item-price {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--accent);
+    white-space: nowrap;
+    min-width: 52px;
+    text-align: left;
+  }
+  .cart-qty-stepper {
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .cart-qty-btn {
+    border: none;
+    background: transparent;
+    color: var(--accent);
+    font-size: 17px;
+    font-weight: 900;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Tajawal', sans-serif;
+  }
+  .cart-qty-btn:hover { background: var(--accent); color: #fff; }
+  .cart-qty-btn.remove { color: #e05050; }
+  .cart-qty-btn.remove:hover { background: #e05050; color: #fff; }
+  .cart-qty-num {
+    min-width: 26px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-primary);
+    user-select: none;
+  }
+  .cart-total {
+    font-size: 19px;
+    font-weight: 800;
+    padding: 14px;
+    background: var(--pill-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-strong);
+    text-align: center;
+    margin-top: 12px;
+  }
+  .cart-total span { color: var(--accent); }
+  .booking-form label {
+    display: block;
+    margin: 14px 0 6px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 14px;
+  }
+  .booking-form input,
+  .booking-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .booking-form input:focus,
+  .booking-form textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139,115,85,0.12);
+  }
+  .booking-form button[type="submit"],
+  .btn-whatsapp-cta {
+    width: 100%;
+    background: var(--btn-whatsapp);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 800;
+    font-family: 'Tajawal', sans-serif;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: all 0.25s;
+    box-shadow: 0 4px 16px rgba(37,162,68,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .booking-form button[type="submit"]:hover,
+  .btn-whatsapp-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(37,162,68,0.4);
+  }
+  .floating-cart {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    background: var(--btn-bg);
+    color: white;
+    padding: 15px 28px;
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    font-weight: 800;
+    font-size: 15px;
+    font-family: 'Tajawal', sans-serif;
+    z-index: 999;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .floating-cart:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 20px 50px rgba(139,115,85,0.4);
+  }
+  .cart-count {
+    background: #d4a574;
+    color: #1a1208;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 6px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--btn-bg);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  @media (max-width: 640px) {
+    body { padding-top: 55px; }
+    .container { padding: 20px 12px; }
+    .header { padding: 36px 16px; border-radius: 18px; margin-bottom: 30px; }
+    .header h1 { font-size: 30px; }
+    .header p { font-size: 15px; }
+    .section-title { font-size: 21px; }
+    .products {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .card-body { padding: 14px 12px 12px; }
+    .card-name { font-size: 14.5px; }
+    .price { font-size: 20px; }
+    .btn { padding: 9px 10px; font-size: 12px; border-radius: 10px; }
+    .card-buttons { gap: 6px; margin-top: 10px; }
+    .card-category-pill { font-size: 10px; padding: 2px 8px; }
+    .floating-cart {
+      bottom: 16px;
+      left: 16px;
+      padding: 12px 20px;
+      font-size: 13px;
+    }
+    .modal-content { padding: 22px 18px; }
+    .navbar-brand { padding: 12px 16px; font-size: 16px; }
+    .navbar-item { padding: 12px 14px; font-size: 12.5px; }
+  }
+  @media (max-width: 380px) {
+    .products { grid-template-columns: 1fr; }
+    .card-name { font-size: 16px; }
+    .product-image{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-bottom:10px;
+  }
+  }
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="#" class="navbar-brand" onclick="scrollToTop(); return false;">☕ WNS Café</a>
+    <div class="navbar-menu" id="navbarMenu"></div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <h1>☕ قائمة WNS Café 🎂</h1>
+    <p>استمتع بأفضل المشروبات واحجز عيد ميلادك في مكان واحد</p>
+  </div>
+
+  <div id="menu"></div>
+
+  <div id="cartModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCart()">✕</span>
+      <h2>🛒 السلة</h2>
+      <div id="cartItems"></div>
+      <div id="totalPrice" class="cart-total" style="display:none"></div>
+      <button onclick="orderCartWhatsApp()" class="btn-whatsapp-cta">📱 اطلب السلة عبر واتساب</button>
+    </div>
+  </div>
+
+  <div id="birthdayBookingModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeBirthdayBooking()">✕</span>
+      <h2>🎂 حجز عيد ميلاد</h2>
+      <form class="booking-form" onsubmit="submitBirthdayBooking(event)">
+        <label>الاسم *</label>
+        <input type="text" id="birthdayName" required placeholder="أدخل اسمك">
+
+        <label>رقم الموبايل *</label>
+        <input type="tel" id="birthdayPhone" required placeholder="01XXXXXXXXX">
+
+        <label>اليوم *</label>
+        <input type="date" id="birthdayDate" required>
+
+        <label>الوقت *</label>
+        <input type="time" id="birthdayTime" required>
+
+        <label>ملاحظات إضافية</label>
+        <textarea id="birthdayNotes" rows="3" placeholder="عدد الأشخاص أو أي طلبات خاصة..."></textarea>
+
+        <button type="submit">📱 إرسال الحجز عبر واتساب</button>
+      </form>
+    </div>
+  </div>
+
+  <button onclick="showCart()" class="floating-cart">
+    🛒 السلة
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const products = [
+{id:1, category:"Hot Drinks", name:"شاي عاده", price:10, image:"images/tea.png"},
+{id:2, category:"Hot Drinks", name:"شاي فتله", price:15, image:"images/teaa.png"},
+{id:3, category:"Hot Drinks", name:"شاي حليب", price:30, image:"images/teaaa.png"},
+{id:4, category:"Hot Drinks", name:"شاي فليفر", price:15, image:"images/teaf.png"},
+{id:5, category:"Hot Drinks", name:"نعناع", price:15, image:"images/mint.png"},
+{id:6, category:"Hot Drinks", name:"كركديه", price:15,image:"images/kar.png"},
+{id:7, category:"Hot Drinks", name:"ينسون", price:15,image:"images/ynson.png"},
+{id:8, category:"Hot Drinks", name:"خلطه", price:20,image:"images/kha.png"},
+{id:9, category:"Hot Drinks", name:"قرفه", price:15,image:"images/qerfa.png"},
+{id:10, category:"Hot Drinks", name:"قرفه حليب", price:30,image:"images/qerfaa.png"},
+{id:11, category:"Hot Drinks", name:"سحلب", price:35,image:"images/sahlab.png"},
+{id:12, category:"Hot Drinks", name:"سحلب مكسرات", price:45,image:"images/sahlab_nuts.png"},
+{id:13, category:"Hot Drinks", name:"سحلب فواكه", price:45,image:"images/sahlab_fruits.png"},
+  {id:14, category:"Hot Drinks", name:"هوت سيدر (تفاح _ برتقال)", price:30},
+  {id:15, category:"Hot Drinks", name:"هوت شوكليت", price:45},
+  {id:16, category:"Hot Drinks", name:"هوت اوريو", price:50},
+  {id:17, category:"Hot Drinks", name:"هوت لوتس", price:50},
+  {id:18, category:"Hot Drinks", name:"هوت شوكليت (اي نوع شوكليت من اختيارك)", price:60},
+  {id:19, category:"Turkish Coffee", name:"فاتح ساده D", price:35,image:"images/coffe.jpeg"},
+  {id:20, category:"Turkish Coffee", name:"فاتح ساده S", price:25,image:"images/coffe.jpeg"},
+  {id:21, category:"Turkish Coffee", name:"وسط سادة D", price:35,image:"images/coffe.jpeg"},
+  {id:22, category:"Turkish Coffee", name:"وسط سادة S", price:25,image:"images/coffe.jpeg"},
+  {id:23, category:"Turkish Coffee", name:"غامق سادة D", price:35,image:"images/coffe.jpeg"},
+  {id:24, category:"Turkish Coffee", name:"غامق سادة S", price:25,image:"images/coffe.jpeg"},
+  {id:25, category:"Turkish Coffee", name:"فاتح محوج D", price:40,image:"images/coffe.jpeg"},
+  {id:26, category:"Turkish Coffee", name:"فاتح محوج S", price:30,image:"images/coffe.jpeg"},
+  {id:27, category:"Turkish Coffee", name:"وسط محوج D", price:40,image:"images/coffe.jpeg"},
+  {id:28, category:"Turkish Coffee", name:"وسط محوج S", price:30,image:"images/coffe.jpeg"},
+  {id:29, category:"Turkish Coffee", name:"غامق محوج D", price:40,image:"images/coffe.jpeg"},
+  {id:30, category:"Turkish Coffee", name:"غامق محوج S", price:30,image:"images/coffe.jpeg"},
+  {id:31, category:"French Coffee", name:"فرنساوي عاده", price:35},
+  {id:32, category:"French Coffee", name:"بندق", price:45},
+  {id:33, category:"French Coffee", name:"كراميل", price:45},
+  {id:34, category:"French Coffee", name:"نوتيلا", price:40},
+  {id:35, category:"French Coffee", name:"لوتس", price:40},
+  {id:36, category:"French Coffee", name:"فراوله", price:40},
+  {id:37, category:"French Coffee", name:"نسكافيه بلاك", price:25},
+  {id:38, category:"French Coffee", name:"نسكافيه بلبن", price:40},
+  {id:39, category:"French Coffee", name:"كوفي مكس", price:15},
+  {id:40, category:"French Coffee", name:"كوفي مكس بلبن", price:30},
+  {id:41, category:"Italian Coffee", name:"اسبريسو سنجل", price:30},
+  {id:42, category:"Italian Coffee", name:"اسبريسو دبل", price:40},
+  {id:43, category:"Italian Coffee", name:"ميكاتو سنجل", price:35},
+  {id:44, category:"Italian Coffee", name:"ميكاتو دبل", price:45},
+  {id:45, category:"Italian Coffee", name:"كورتادو", price:50},
+  {id:46, category:"Italian Coffee", name:"فلات وايت", price:50},
+  {id:47, category:"Italian Coffee", name:"أفوجاتو", price:40},
+  {id:48, category:"Italian Coffee", name:"لاتيه", price:55},
+  {id:49, category:"Italian Coffee", name:"سبانش لاتيه", price:60},
+  {id:50, category:"Italian Coffee", name:"كابتشينو", price:55},
+  {id:51, category:"Italian Coffee", name:"موكا (دارك/وايت)", price:60},
+  {id:52, category:"Italian Coffee", name:"أميركان", price:40},
+  {id:53, category:"Ice Italian Coffee", name:"ايس لاتيه", price:60},
+  {id:54, category:"Ice Italian Coffee", name:"ايس سبانش لاتيه", price:70},
+  {id:55, category:"Ice Italian Coffee", name:"ايس كابتشينو", price:60},
+  {id:56, category:"Ice Italian Coffee", name:"ايس كراميل ميكاتو", price:65},
+  {id:57, category:"Ice Italian Coffee", name:"ايس موكا (دارك/وايت)", price:70},
+  {id:58, category:"Ice Italian Coffee", name:"ايس أميركان", price:45},
+  {id:59, category:"Juice", name:"عصير مانجو", price:40},
+  {id:60, category:"Juice", name:"عصير فراولة", price:40},
+  {id:61, category:"Juice", name:"كيوي", price:50},
+  {id:62, category:"Juice", name:"بلح باللبن", price:40},
+  {id:63, category:"Juice", name:"بلح باللبن مكسرات", price:55},
+  {id:64, category:"Juice", name:"رمان", price:40},
+  {id:65, category:"Juice", name:"برتقال", price:40},
+  {id:66, category:"Juice", name:"جوافة", price:35},
+  {id:67, category:"Juice", name:"جوافة باللبن", price:45},
+  {id:68, category:"Juice", name:"ليمون", price:35},
+  {id:69, category:"Juice", name:"ليمون نعناع", price:40},
+  {id:70, category:"Juice", name:"موز", price:40},
+  {id:71, category:"Juice", name:"بطيخ", price:40},
+  {id:72, category:"Cocktails", name:"فلوريدا", price:50},
+  {id:73, category:"Cocktails", name:"هاواي", price:60},
+  {id:74, category:"Cocktails", name:"كامبا", price:60},
+  {id:75, category:"Cocktails", name:"ريد كوكتيل", price:55},
+  {id:76, category:"Cocktails", name:"طوفي", price:55},
+  {id:77, category:"Cocktails", name:"ريد منت", price:50},
+  {id:78, category:"Cocktails", name:"فريش WNS", price:65},
+  {id:79, category:"Smoothie", name:"سموثي مانجو", price:55},
+  {id:80, category:"Smoothie", name:"سموثي فراولة", price:50},
+  {id:81, category:"Smoothie", name:"سموثي بطيخ", price:50},
+  {id:82, category:"Smoothie", name:"سموثي ليمون", price:45},
+  {id:83, category:"Smoothie", name:"سموثي ليمون نعناع", price:50},
+  {id:84, category:"Smoothie", name:"سموثي خوخ", price:55},
+  {id:85, category:"Smoothie", name:"سموثي أناناس", price:50},
+  {id:86, category:"Smoothie", name:"باشون فروت", price:55},
+  {id:87, category:"Smoothie", name:"بلو بيري", price:50},
+  {id:88, category:"Smoothie", name:"مكس بيري", price:50},
+  {id:89, category:"Smoothie", name:"كيوي", price:55},
+  {id:90, category:"Smoothie", name:"تفاح أخضر", price:45},
+  {id:91, category:"Smoothie", name:"كريز", price:50},
+  {id:92, category:"Frappe", name:"فرابيه فانيليا", price:50},
+  {id:93, category:"Frappe", name:"فرابيه شوكليت", price:50},
+  {id:94, category:"Frappe", name:"فرابيه كوفي", price:50},
+  {id:95, category:"Frappe", name:"فرابيه بندق", price:55},
+  {id:96, category:"Frappe", name:"فرابيه كراميل", price:55},
+  {id:97, category:"Frappe", name:"فرابيه لوتس", price:55},
+  {id:98, category:"Frappe", name:"فرابيه نوتيلا", price:55},
+  {id:99, category:"Frappe", name:"فرابيه أوريو", price:60},
+  {id:100, category:"Frappe", name:"فرابيه فراولة", price:55},
+  {id:101, category:"Frappe", name:"فرابيه موز", price:55},
+  {id:102, category:"Frappe", name:"فرابيه باشون", price:55},
+  {id:103, category:"Frappe", name:"فرابيه مانجو", price:55},
+  {id:104, category:"Soda Mixes", name:"موهيتو كلاسيك", price:50},
+  {id:105, category:"Soda Mixes", name:"موهيتو شعير", price:60},
+  {id:106, category:"Soda Mixes", name:"موهيتو فليفر", price:55},
+  {id:107, category:"Soda Mixes", name:"سكوتش منت", price:50},
+  {id:108, category:"Soda Mixes", name:"صن شاين", price:60},
+  {id:109, category:"Soda Mixes", name:"صن رايز", price:60},
+  {id:110, category:"Soda Mixes", name:"بلو باشون", price:60},
+  {id:111, category:"Soda Mixes", name:"بلو سكاي", price:60},
+  {id:112, category:"Soda Mixes", name:"بينا كولادا", price:60},
+  {id:113, category:"Soda Mixes", name:"شيري كولا", price:60},
+  {id:114, category:"Milkshake", name:"ميلك شيك فانيليا", price:55},
+  {id:115, category:"Milkshake", name:"ميلك شيك شوكليت", price:55},
+  {id:116, category:"Milkshake", name:"ميلك شيك أوريو", price:60},
+  {id:117, category:"Milkshake", name:"ميلك شيك لوتس", price:60},
+  {id:118, category:"Milkshake", name:"هوهوز", price:60},
+  {id:119, category:"Milkshake", name:"توينكز", price:60},
+  {id:120, category:"Milkshake", name:"ميلك شيك كراميل", price:60},
+  {id:121, category:"Milkshake", name:"ميلك شيك بندق", price:65},
+  {id:122, category:"Milkshake", name:"ميلك شيك جالاكسي", price:65},
+  {id:123, category:"Milkshake", name:"ميلك شيك كيت كات", price:65},
+  {id:124, category:"Milkshake", name:"ميلك شيك مانجو", price:60},
+  {id:125, category:"Milkshake", name:"ميلك شيك فراولة", price:60},
+  {id:126, category:"Milkshake", name:"ميلك شيك كريز", price:60},
+  {id:127, category:"Milkshake", name:"ميلك شيك باشون", price:60},
+  {id:128, category:"Milkshake", name:"ميلك شيك أناناس", price:60},
+  {id:129, category:"Milkshake", name:"ميلك شيك بلو بيري", price:55},
+  {id:130, category:"Milkshake", name:"ميلك شيك مكس بيري", price:55},
+  {id:131, category:"Milkshake", name:"ميلك شيك خوخ", price:60},
+  {id:132, category:"Milkshake", name:"ميلك شيك تفاح أخضر", price:60},
+  {id:133, category:"Milkshake", name:"ميلك شيك كيوي", price:60},
+  {id:134, category:"Milkshake", name:"ميلك شيك WNS", price:70},
+  {id:135, category:"Zabadoo", name:"زبادو مانجو", price:65},
+  {id:136, category:"Zabadoo", name:"زبادو فراولة", price:60},
+  {id:137, category:"Zabadoo", name:"زبادو أناناس", price:60},
+  {id:138, category:"Zabadoo", name:"زبادو خوخ", price:65},
+  {id:139, category:"Zabadoo", name:"زبادو بلو بيري", price:60},
+  {id:140, category:"Zabadoo", name:"زبادو باشون فروت", price:65},
+  {id:141, category:"Zabadoo", name:"زبادو مكس بيري", price:60},
+  {id:142, category:"Zabadoo", name:"زبادي تفاح", price:60},
+  {id:143, category:"Zabadoo", name:"زبادو كيوي", price:65},
+  {id:144, category:"Zabadoo", name:"زبادي عسل", price:55},
+  {id:145, category:"Dessert", name:"مولتن كيك", price:60},
+  {id:146, category:"Dessert", name:"ميني تورتة", price:65},
+  {id:147, category:"Dessert", name:"دونتس", price:35},
+  {id:148, category:"Dessert", name:"دونتس بستاشيو", price:40},
+  {id:149, category:"Dessert", name:"شيز كيك", price:50},
+  {id:150, category:"Dessert", name:"شيز كيك بستاشيو", price:60},
+  {id:151, category:"Dessert", name:"طاجن نوتيلا صغير", price:30},
+  {id:152, category:"Dessert", name:"طاجن نوتيلا كبير", price:60},
+  {id:153, category:"Dessert", name:"طاجن وايت صغير", price:30},
+  {id:154, category:"Dessert", name:"طاجن وايت كبير", price:60},
+  {id:155, category:"Dessert", name:"طاجن فراوله صغير", price:30},
+  {id:156, category:"Dessert", name:"طاجن فراوله كبير", price:60},
+  {id:157, category:"Dessert", name:"طاجن توت صغير", price:30},
+  {id:158, category:"Dessert", name:"طاجن توت كبير", price:60},
+  {id:159, category:"Dessert", name:"طاجن لوتس صغير", price:35},
+  {id:160, category:"Dessert", name:"طاجن لوتس كبير", price:70},
+  {id:161, category:"Dessert", name:"طاجن اوريو صغير", price:35},
+  {id:162, category:"Dessert", name:"طاجن اوريو كبير", price:70},
+  {id:163, category:"Dessert", name:"طاجن قهوه صغير", price:35},
+  {id:164, category:"Dessert", name:"طاجن قهوه كبير", price:70},
+  {id:165, category:"Dessert", name:"طاجن هوهوز صغير", price:35},
+  {id:166, category:"Dessert", name:"طاجن هوهوز كبير", price:70},
+  {id:167, category:"Waffle", name:"وافل نوتيلا", price:70},
+  {id:168, category:"Waffle", name:"وافل وايت", price:70},
+  {id:169, category:"Waffle", name:"وافل كراميل", price:70},
+  {id:170, category:"Waffle", name:"وافل أوريو", price:80},
+  {id:171, category:"Waffle", name:"وافل لوتس", price:80},
+  {id:172, category:"Waffle", name:"وافل بيستاشيوا", price:90},
+  {id:173, category:"Waffle", name:"وافل ميكس نصين(لا يشمل بيستاشيو)", price:80},
+  {id:174, category:"Waffle", name:"وافل ونس(4 انواع صوص)", price:90},
+  {id:175, category:"Waffle", name:"وافل ميكس ونس", price:110},
+  {id:176, category:"Waffle", name:"وافل جلاكسي", price:100},
+  {id:177, category:"Waffle", name:"وافل كيت كات", price:100},
+  {id:178, category:"Waffle", name:"وافل موز (وايت)", price:80},
+  {id:179, category:"Waffle", name:"وافل موز (نوتيلا)", price:80},
+  {id:180, category:"Waffle", name:"وافل وايت (توت)", price:80},
+  {id:181, category:"Waffle", name:"وافل وايت (فراولة)", price:80},
+  {id:182, category:"Fresca", name:"نوتيلا", price:30},
+  {id:183, category:"Fresca", name:"وايت", price:30},
+  {id:184, category:"Fresca", name:"لوتس", price:35},
+  {id:185, category:"Fresca", name:"اوريو", price:35},
+  {id:186, category:"Fresca", name:"هوهوز", price:35},
+  {id:187, category:"Fresca", name:"توينكز", price:35},
+  {id:188, category:"Fresca", name:"بيستاشيو", price:40},
+  {id:189, category:"Fresca", name:"فريسكا ونس", price:40},
+  {id:190, category:"Fresca", name:"طاجن فريسكا", price:60},
+  {id:191, category:"Soft Drinks", name:"بيبسي", price:25},
+  {id:192, category:"Soft Drinks", name:"سفن", price:25},
+  {id:193, category:"Soft Drinks", name:"ميرندا", price:25},
+  {id:194, category:"Soft Drinks", name:"ستينج", price:25},
+  {id:195, category:"Soft Drinks", name:"فيروز", price:30},
+  {id:196, category:"Soft Drinks", name:"فيوري", price:25},
+  {id:197, category:"Soft Drinks", name:"Vcola", price:25},
+  {id:198, category:"Soft Drinks", name:"بريل", price:30},
+  {id:199, category:"Soft Drinks", name:"ريدبل", price:70},
+  {id:200, category:"Extras", name:"صوص إضافي", price:10},
+  {id:201, category:"Extras", name:"مارشميلو", price:10},
+  {id:202, category:"Extras", name:"سيرب فليفر", price:15},
+  {id:203, category:"Extras", name:"حليب مكثف", price:15},
+  {id:204, category:"Extras", name:"مكسرات", price:20},
+  {id:205, category:"Extras", name:"بوبا", price:30},
+  {id:206, category:"Extras", name:"كب تلج مع فليفر", price:15},
+  {id:207, category:"Birthday", name:"حجز عيد ميلاد", price:0, isBirthday:true}
+];
+
+const categoryMeta = {
+  "Hot Drinks": { id:"hot-drinks", emoji:"🔥", label:"مشروبات ساخنة" },
+  "Turkish Coffee": { id:"turkish-coffee", emoji:"☕", label:"قهوة تركي" },
+  "French Coffee": { id:"french-coffee", emoji:"🫖", label:"قهوة فرنساوي" },
+  "Italian Coffee": { id:"italian-coffee", emoji:"🇮🇹", label:"قهوة إيطالي" },
+  "Ice Italian Coffee": { id:"ice-italian-coffee", emoji:"🧊", label:"قهوة باردة" },
+  "Juice": { id:"juice", emoji:"🍹", label:"عصائر" },
+  "Cocktails": { id:"cocktails", emoji:"🍓", label:"كوكتيل" },
+  "Smoothie": { id:"smoothie", emoji:"🥤", label:"سموثي" },
+  "Frappe": { id:"frappe", emoji:"☕", label:"فرابيه" },
+  "Soda Mixes": { id:"soda-mixes", emoji:"🫧", label:"مشروبات غازية" },
+  "Milkshake": { id:"milkshake", emoji:"🍦", label:"ميلك شيك" },
+  "Zabadoo": { id:"zabadoo", emoji:"🥛", label:"زبادو" },
+  "Dessert": { id:"dessert", emoji:"🍰", label:"حلويات" },
+  "Waffle": { id:"waffle", emoji:"🧇", label:"وافل" },
+  "Fresca": { id:"fresca", emoji:"🍫", label:"فريسكا" },
+  "Soft Drinks": { id:"soft-drinks", emoji:"🥤", label:"مشروبات" },
+  "Extras": { id:"extras", emoji:"➕", label:"إضافات" },
+  "Birthday": { id:"birthday", emoji:"🎂", label:"حجز عيد ميلاد" }
+};
+
+const menuContainer = document.getElementById('menu');
+const navbarMenu = document.getElementById('navbarMenu');
+let cart = [];
+const whatsappNumber = "201028275135";
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function getTotalItems() {
+  return cart.reduce((s, i) => s + i.qty, 0);
+}
+
+function updateCartBadge() {
+  document.getElementById('cartCount').textContent = getTotalItems();
+}
+
+function getCartEntry(id) {
+  return cart.find(i => i.id === id);
+}
+
+function getCardQty(id) {
+  const e = getCartEntry(id);
+  return e ? e.qty : 0;
+}
+
+function buildCardHTML(product, meta, qty) {
+  const stepperHTML = qty === 0
+    ? `<button class="btn btn-add-first" onclick="addToCart(${product.id})">🛒 أضف</button>`
+    : `<div class="qty-stepper">
+        <button class="qty-btn" onclick="decreaseQty(${product.id})">−</button>
+        <span class="qty-display">${qty}</span>
+        <button class="qty-btn" onclick="increaseQty(${product.id})">+</button>
+      </div>`;
+
+  return `
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <img src="${product.image}" class="product-image">
+      <span class="card-category-pill">${meta.emoji} ${meta.label}</span>
+      <div class="card-name">${product.name}</div>
+      <div class="card-price-row">
+        <div>
+          <span class="price">${product.price}</span>
+          <span class="price-currency">جنيه</span>
+        </div>
+      </div>
+      <div class="card-buttons">
+        ${stepperHTML}
+        <button class="btn btn-order" onclick="orderWhatsApp(${product.id})">📱 اطلب</button>
+      </div>
+    </div>
+  `;
+}
+
+function buildBirthdayCardHTML(product) {
+  return `
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <span class="card-category-pill">🎂 حجز عيد ميلاد</span>
+      <div class="card-name">${product.name}</div>
+      <div class="birthday-note">اضغط احجز الآن واكتب الاسم ورقم الموبايل واليوم والوقت، وسيتم إرسال الطلب مباشرة على واتساب.</div>
+      <div class="card-buttons">
+        <button class="btn btn-birthday" onclick="openBirthdayBooking()">🎂 احجز الآن</button>
+      </div>
+    </div>
+  `;
+}
+
+function refreshCard(id) {
+  const card = document.getElementById(`card-${id}`);
+  if (!card) return;
+  const product = products.find(p => p.id === id);
+  const meta = categoryMeta[product.category] || { emoji:'📋', label: product.category };
+  card.innerHTML = buildCardHTML(product, meta, getCardQty(id));
+}
+
+function addToCart(id) {
+  const item = products.find(p => p.id === id);
+  const entry = getCartEntry(id);
+  if (entry) entry.qty++;
+  else cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
+  updateCartBadge();
+  refreshCard(id);
+  showToast(`✅ ${item.name} أُضيف للسلة`);
+}
+
+function increaseQty(id) {
+  const entry = getCartEntry(id);
+  if (!entry) return;
+  entry.qty++;
+  updateCartBadge();
+  refreshCard(id);
+  if (document.getElementById('cartModal').style.display === 'flex') renderCartItems();
+}
+
+function decreaseQty(id) {
+  const entry = getCartEntry(id);
+  if (!entry) return;
+  entry.qty--;
+  if (entry.qty <= 0) cart = cart.filter(i => i.id !== id);
+  updateCartBadge();
+  refreshCard(id);
+  if (document.getElementById('cartModal').style.display === 'flex') renderCartItems();
+}
+
+function renderCartItems() {
+  const cartDiv = document.getElementById('cartItems');
+  const totalDiv = document.getElementById('totalPrice');
+  cartDiv.innerHTML = '';
+
+  if (cart.length === 0) {
+    cartDiv.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:24px;font-size:15px;">🛒 السلة فارغة</p>';
+    totalDiv.style.display = 'none';
+    return;
+  }
+
+  let total = 0;
+  cart.forEach(item => {
+    const lineTotal = item.price * item.qty;
+    total += lineTotal;
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <span class="cart-item-name">${item.name}</span>
+      <div class="cart-item-right">
+        <div class="cart-qty-stepper">
+          <button class="cart-qty-btn remove" onclick="decreaseQty(${item.id})">−</button>
+          <span class="cart-qty-num">${item.qty}</span>
+          <button class="cart-qty-btn" onclick="increaseQty(${item.id})">+</button>
+        </div>
+        <span class="cart-item-price">${lineTotal} جنيه</span>
+      </div>
+    `;
+    cartDiv.appendChild(div);
+  });
+
+  totalDiv.style.display = 'block';
+  totalDiv.innerHTML = `الإجمالي: <span>${total} جنيه</span>`;
+}
+
+function showCart() {
+  document.getElementById('cartModal').style.display = 'flex';
+  renderCartItems();
+}
+
+function closeCart() {
+  document.getElementById('cartModal').style.display = 'none';
+}
+
+function orderWhatsApp(id) {
+  const item = products.find(p => p.id === id);
+  const msg = `مرحبا، أريد طلب: ${item.name} بسعر ${item.price} جنيه`;
+  window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function orderCartWhatsApp() {
+  if (cart.length === 0) {
+    showToast('السلة فارغة!');
+    return;
+  }
+  let total = 0;
+  let msg = 'مرحبا، أريد طلب:\n';
+  cart.forEach(i => {
+    const lineTotal = i.price * i.qty;
+    total += lineTotal;
+    msg += `- ${i.name} × ${i.qty} = ${lineTotal} جنيه\n`;
+  });
+  msg += `\n💰 الإجمالي: ${total} جنيه`;
+  window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function renderNavbar(categories) {
+  navbarMenu.innerHTML = categories.map(cat => {
+    const meta = categoryMeta[cat] || { id: cat.toLowerCase().replace(/\s+/g,'-'), emoji:'📋', label: cat };
+    return `<a href="#${meta.id}" class="navbar-item">${meta.emoji} ${meta.label}</a>`;
+  }).join('');
+}
+
+function renderMenu() {
+  const categories = [...new Set(products.map(p => p.category))];
+  renderNavbar(categories);
+
+  categories.forEach(cat => {
+    const meta = categoryMeta[cat] || { id: cat.toLowerCase().replace(/\s+/g,'-'), emoji:'📋', label: cat };
+    const catProducts = products.filter(p => p.category === cat);
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    section.id = meta.id;
+    section.innerHTML = `
+      <div class="section-header">
+        <span class="section-emoji">${meta.emoji}</span>
+        <span class="section-title">${meta.label}</span>
+        <div class="section-line"></div>
+        <span class="section-count">${catProducts.length} صنف</span>
+      </div>
+    `;
+
+    const grid = document.createElement('div');
+    grid.className = 'products';
+
+    catProducts.forEach(product => {
+      const card = document.createElement('div');
+      card.className = product.isBirthday ? 'card birthday-card' : 'card';
+      card.id = `card-${product.id}`;
+      card.innerHTML = product.isBirthday ? buildBirthdayCardHTML(product) : buildCardHTML(product, meta, 0);
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    menuContainer.appendChild(section);
+  });
+}
+
+function openBirthdayBooking() {
+  document.getElementById('birthdayBookingModal').style.display = 'flex';
+  document.getElementById('birthdayDate').min = new Date().toISOString().split('T')[0];
+}
+
+function closeBirthdayBooking() {
+  document.getElementById('birthdayBookingModal').style.display = 'none';
+}
+
+function submitBirthdayBooking(event) {
+  event.preventDefault();
+  const name = document.getElementById('birthdayName').value;
+  const phone = document.getElementById('birthdayPhone').value;
+  const date = document.getElementById('birthdayDate').value;
+  const time = document.getElementById('birthdayTime').value;
+  const notes = document.getElementById('birthdayNotes').value;
+
+  let msg = `🎂 *حجز عيد ميلاد جديد* 🎂\n\n`;
+  msg += `👤 *الاسم:* ${name}\n`;
+  msg += `📱 *الموبايل:* ${phone}\n`;
+  msg += `📅 *اليوم:* ${date}\n`;
+  msg += `🕐 *الوقت:* ${time}\n`;
+  if (notes) msg += `\n📝 *ملاحظات:*\n${notes}`;
+
+  window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+  closeBirthdayBooking();
+  document.querySelector('#birthdayBookingModal .booking-form').reset();
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) window.scrollTo({ top: target.offsetTop - 68, behavior: 'smooth' });
+    });
+  });
+});
+
+document.querySelectorAll('.modal').forEach(m => {
+  m.addEventListener('click', e => {
+    if (e.target === m) m.style.display = 'none';
+  });
+});
+
+renderMenu();
+</script>
+</body>
+</html>
